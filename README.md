@@ -43,6 +43,4 @@ After installing this module from Odoo  Apps, follow these steps to activate thi
 
 -   Developed and maintained by - [Ksolves India Pvt. Ltd.](https://www.ksolves.com/)
 
-# License
-
 
