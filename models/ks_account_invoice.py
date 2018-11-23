@@ -6,11 +6,12 @@ class KsGlobalDiscountInvoice(models.Model):
     _inherit = "account.invoice"
 
     ks_global_discount_type = fields.Selection([('percent', 'Percentage'), ('amount', 'Amount')],
-                                               string='Universal Discount type', readonly=True,
-                                               states={'draft': [('readonly', False)], 'sent': [('readonly', False)]},
-                                               default='percent')
-    ks_global_discount_rate = fields.Float('Universal Discount Rate', readonly=True, states={'draft': [('readonly', False)],
-                                                                                   'sent': [('readonly', False)]})
+                                               string='Universal Discount Type',
+                                               readonly=True, states={'draft': [('readonly', False)],
+                                                                      'sent': [('readonly', False)]}, default='percent')
+    ks_global_discount_rate = fields.Float('Universal Discount',
+                                           readonly=True,
+                                           states={'draft': [('readonly', False)], 'sent': [('readonly', False)]})
     ks_amount_discount = fields.Monetary(string='Universal Discount', readonly=True, compute='_compute_amount',
                                          store=True, track_visibility='always')
     ks_enable_discount = fields.Boolean(compute='ks_verify_discount')
@@ -58,7 +59,8 @@ class KsGlobalDiscountInvoice(models.Model):
                 raise ValidationError('You cannot enter percentage value greater than 100.')
         else:
             if self.ks_global_discount_rate < 0 or self.amount_untaxed < 0:
-                raise ValidationError('You cannot enter discount amount greater than actual cost or lower than 0.')
+                raise ValidationError(
+                    'You cannot enter discount amount greater than actual cost or value lower than 0.')
 
     @api.onchange('purchase_id')
     def ks_get_purchase_order_discount(self):
@@ -73,8 +75,8 @@ class KsGlobalDiscountInvoice(models.Model):
             if self.ks_global_discount_type == "percent":
                 ks_name = ks_name + " (" + str(self.ks_global_discount_rate) + "%)"
             ks_name = ks_name + " for " + (self.origin if self.origin else ("Invoice No " + str(self.id)))
-
             if self.ks_sales_discount_account and (self.type == "out_invoice" or self.type == "out_refund"):
+
                 dict = {
                     'invl_id': self.number,
                     'type': 'src',

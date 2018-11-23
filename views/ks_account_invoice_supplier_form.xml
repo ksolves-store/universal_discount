@@ -19,8 +19,9 @@
                 <xpath expr="//field[@name='tax_line_ids']" position="attributes">
                     <attribute name="class">ks_margin</attribute>
                 </xpath>
-                <xpath expr="//group[@class='oe_subtotal_footer oe_right']/field[@name='amount_tax']" position="after">
-                    <field name="ks_amount_discount" attrs="{'invisible':[('ks_enable_discount','!=',True),('ks_amount_discount','=',0)]}"/>
+                <xpath expr="//field[@name='amount_tax']" position="after">
+                    <field name="ks_amount_discount"
+                           attrs="{'invisible':[('ks_enable_discount','!=',True),('ks_amount_discount','=',0)]}"/>
                 </xpath>
             </field>
         </record>

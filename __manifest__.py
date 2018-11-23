@@ -3,7 +3,7 @@
     'name': "Universal Discount",
 
     'summary': """
-        Universal Discount v11.0""",
+        Universal Discount v12.0""",
 
     'description': """
         - Apply a field in Sales, Purchase and Invoice module to calculate discount after the order lines are inserted.
@@ -16,7 +16,8 @@
              
              Settings -> general settings -> invoice 
         
-        - Maintains the global tax entries in accounts specified by you (**Note** : To see journal entries in Invoicing: (in debug mode) 
+        - Maintains the global tax entries in accounts specified by you (**Note** : To see journal entries in Invoicing:
+         (in debug mode) 
              
              Settings -> users -> select user -> Check "Show Full Accounting Features")
         
@@ -28,10 +29,9 @@
     'author': "Ksolves",
     'website': "https://www.ksolves.com/",
     'images': ['static/description/main.png'],
-    'license': 'LGPL-3',
     'category': 'Sales Management',
     'version': '1.0.0',
-
+    'license': 'OPL-1',
     'depends': ['base', 'sale', 'purchase', 'sale_management'],
 
     'data': [
@@ -41,7 +41,7 @@
         'views/ks_account_invoice_supplier_form.xml',
         'views/ks_account_account.xml',
         'views/ks_report.xml',
-        'views/assets.xml'
+        'views/assets.xml',
 
     ],
 

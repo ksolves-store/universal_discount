@@ -6,11 +6,11 @@ class KSGlobalDiscountPurchases(models.Model):
     _inherit = "purchase.order"
 
     ks_global_discount_type = fields.Selection([('percent', 'Percentage'), ('amount', 'Amount')],
-                                               string='Universal Discount type', readonly=True,
+                                               string='Universal Discount Type', readonly=True,
                                                states={'draft': [('readonly', False)], 'sent': [('readonly', False)]},
                                                default='percent')
-    ks_global_discount_rate = fields.Float('Universal Discount Rate', readonly=True, states={'draft': [('readonly', False)],
-                                                                                   'sent': [('readonly', False)]})
+    ks_global_discount_rate = fields.Float('Universal Discount', readonly=True,
+                                           states={'draft': [('readonly', False)], 'sent': [('readonly', False)]})
     ks_amount_discount = fields.Monetary(string='Universal Discount', readonly=True, compute='_amount_all',
                                          track_visibility='always', store=True)
     ks_enable_discount = fields.Boolean(compute='ks_verify_discount')
@@ -46,4 +46,5 @@ class KSGlobalDiscountPurchases(models.Model):
                 raise ValidationError('You cannot enter percentage value greater than 100.')
         else:
             if self.ks_global_discount_rate < 0 or self.ks_global_discount_rate > self.amount_untaxed:
-                raise ValidationError('You cannot enter discount amount greater than actual cost or lower than 0.')
+                raise ValidationError(
+                    'You cannot enter discount amount greater than actual cost or value lower than 0.')

@@ -2,7 +2,7 @@
     <data>
 
         <record id="ks_global_discount_invoice_view_form" model="ir.ui.view">
-            <field name="name">ks.global.discount.account.invoice</field>
+            <field name="name">ks.global.discount.account.invoice.form</field>
             <field name="model">account.invoice</field>
             <field name="inherit_id" ref="account.invoice_form"/>
             <field name="arch" type="xml">
@@ -22,11 +22,12 @@
                     </div>
                 </xpath>
                 <xpath expr="//field[@name='amount_tax']" position="after">
-                    <field name="ks_amount_discount"
-                           attrs="{'invisible':[('ks_enable_discount','!=',True),('ks_amount_discount','=',0)]}"/>
+                    <field name="ks_amount_discount" attrs="{'invisible':[('ks_enable_discount','!=',True),('ks_amount_discount','=',0)]}" />
                 </xpath>
             </field>
         </record>
+
+
     </data>
 </odoo>
 
