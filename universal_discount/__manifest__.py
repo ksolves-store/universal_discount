@@ -30,7 +30,7 @@
     'website': "https://www.ksolves.com/",
     'images': ['static/description/main.png'],
     'category': 'Sales Management',
-    'version': '1.0.1',
+    'version': '1.1.1',
     'license': 'LGPL-3',
     'depends': ['base', 'sale', 'purchase', 'sale_management'],
 

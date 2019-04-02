@@ -21,7 +21,7 @@ class KsGlobalDiscountSales(models.Model):
 
     @api.depends('name')
     def ks_verify_discount(self):
-        self.ks_enable_discount = self.env['ir.config_parameter'].get_param('ks_enable_discount')
+        self.ks_enable_discount = self.env['ir.config_parameter'].sudo().get_param('ks_enable_discount')
 
     @api.depends('order_line.price_total', 'ks_global_discount_rate', 'ks_global_discount_type')
     def _amount_all(self):

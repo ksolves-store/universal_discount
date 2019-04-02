@@ -22,9 +22,9 @@ class KsGlobalDiscountInvoice(models.Model):
     @api.depends('name')
     def ks_verify_discount(self):
         for rec in self:
-            rec.ks_enable_discount = rec.env['ir.config_parameter'].get_param('ks_enable_discount')
-            rec.ks_sales_discount_account = rec.env['ir.config_parameter'].get_param('ks_sales_discount_account')
-            rec.ks_purchase_discount_account = rec.env['ir.config_parameter'].get_param('ks_purchase_discount_account')
+            rec.ks_enable_discount = rec.env['ir.config_parameter'].sudo().get_param('ks_enable_discount')
+            rec.ks_sales_discount_account = rec.env['ir.config_parameter'].sudo().get_param('ks_sales_discount_account')
+            rec.ks_purchase_discount_account = rec.env['ir.config_parameter'].sudo().get_param('ks_purchase_discount_account')
 
     @api.multi
     @api.depends('invoice_line_ids.price_subtotal', 'tax_line_ids.amount', 'tax_line_ids.amount_rounding',
