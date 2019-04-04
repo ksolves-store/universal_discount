@@ -13,9 +13,9 @@ class KSResConfigSettings(models.TransientModel):
     def get_values(self):
         ks_res = super(KSResConfigSettings, self).get_values()
         ks_res.update(
-            ks_enable_discount=self.env['ir.config_parameter'].get_param('ks_enable_discount'),
+            ks_enable_discount=self.env['ir.config_parameter'].sudo().get_param('ks_enable_discount'),
             ks_sales_discount_account=int(
-                self.env['ir.config_parameter'].get_param('ks_sales_discount_account')),
+                self.env['ir.config_parameter'].sudo().get_param('ks_sales_discount_account')),
             ks_purchase_discount_account=int(self.env['ir.config_parameter'].
                                              get_param('ks_purchase_discount_account')),
 
