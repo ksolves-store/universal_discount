@@ -25,7 +25,7 @@
         - Also update the report PDF printout with global discount value.
     """,
 
-    'author': "Ksolves",
+    'author': "Ksolves India Pvt. Ltd.",
     'website': "https://www.ksolves.com/",
     'images': ['static/description/main.png'],
     'license': 'LGPL-3',
