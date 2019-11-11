@@ -150,7 +150,8 @@ class KsGlobalDiscountInvoice(models.Model):
                 amount = rec.ks_amount_discount
                 if rec.ks_sales_discount_account \
                         and (rec.type == "out_invoice"
-                             or rec.type == "out_refund"):
+                             or rec.type == "out_refund")\
+                        and amount > 0:
                     if rec.type == "out_invoice":
                         already_exists.update({
                             'debit': amount > 0.0 and amount or 0.0,
@@ -163,7 +164,8 @@ class KsGlobalDiscountInvoice(models.Model):
                         })
                 if rec.ks_purchase_discount_account \
                         and (rec.type == "in_invoice"
-                             or rec.type == "in_refund"):
+                             or rec.type == "in_refund")\
+                        and amount > 0:
                     if rec.type == "in_invoice":
                         already_exists.update({
                             'debit': amount < 0.0 and -amount or 0.0,
