@@ -207,7 +207,7 @@ class KsGlobalDiscountInvoice(models.Model):
                         ks_value = " @" + str(self.ks_global_discount_rate) + "%"
                     else:
                         ks_value = ''
-                    # ks_name = ks_name + ks_value + " for " + \
+                    ks_name = ks_name + ks_value
                     #           ("Invoice No: " + str(self.ids)
                     #            if self._origin.id
                     #            else (self.display_name))
