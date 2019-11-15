@@ -27,7 +27,14 @@ class KSGlobalDiscountPurchases(models.Model):
                 rec.ks_calculate_discount()
         return ks_res
 
-    @api.multi
+    def action_view_invoice(self):
+        for rec in self:
+            ks_res = super(KSGlobalDiscountPurchases, rec).action_view_invoice()
+            ks_res['context']['default_ks_global_discount_rate'] = rec.ks_global_discount_rate
+            ks_res['context']['default_ks_global_discount_type'] = rec.ks_global_discount_type
+        return ks_res
+
+    # @api.multi
     def ks_calculate_discount(self):
         for rec in self:
             if rec.ks_global_discount_type == "amount":
@@ -37,6 +44,9 @@ class KSGlobalDiscountPurchases(models.Model):
                     rec.ks_amount_discount = (rec.amount_untaxed + rec.amount_tax) * rec.ks_global_discount_rate / 100
                 else:
                     rec.ks_amount_discount = 0
+            elif not rec.ks_global_discount_type:
+                rec.ks_amount_discount = 0
+                rec.ks_global_discount_rate = 0
             rec.amount_total = rec.amount_tax + rec.amount_untaxed - rec.ks_amount_discount
 
     @api.constrains('ks_global_discount_rate')

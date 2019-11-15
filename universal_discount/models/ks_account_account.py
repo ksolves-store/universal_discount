@@ -6,8 +6,10 @@ class KSResConfigSettings(models.TransientModel):
     _inherit = 'res.config.settings'
 
     ks_enable_discount = fields.Boolean(string="Activate Universal Discount")
-    ks_sales_discount_account = fields.Many2one('account.account', string="Sales Discount Account")
-    ks_purchase_discount_account = fields.Many2one('account.account', string="Purchase Discount Account")
+    ks_sales_discount_account = fields.Many2one('account.account',
+                                                string="Sales Discount Account")
+    ks_purchase_discount_account = fields.Many2one('account.account',
+                                                   string="Purchase Discount Account")
     ks_accounting_present = fields.Boolean(compute='ks_check_charts_of_accounts')
 
     def get_values(self):
@@ -24,6 +26,7 @@ class KSResConfigSettings(models.TransientModel):
         super(KSResConfigSettings, self).set_values()
         self.env['ir.config_parameter'].set_param('ks_enable_discount', self.ks_enable_discount)
         if self.ks_enable_discount:
-            self.env['ir.config_parameter'].set_param('ks_sales_discount_account', self.ks_sales_discount_account.id)
+            self.env['ir.config_parameter'].set_param('ks_sales_discount_account',
+                                                      self.ks_sales_discount_account.id)
             self.env['ir.config_parameter'].set_param('ks_purchase_discount_account',
                                                       self.ks_purchase_discount_account.id)

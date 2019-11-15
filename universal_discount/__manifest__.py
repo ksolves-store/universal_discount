@@ -3,7 +3,7 @@
     'name': "Universal Discount",
 
     'summary': """
-        Universal Discount v12.0""",
+        Universal Discount v13.0""",
 
     'description': """
         - Apply a field in Sales, Purchase and Invoice module to calculate discount after the order lines are inserted.
@@ -28,7 +28,7 @@
 
     'author': "Ksolves India Pvt. Ltd.",
     'website': "https://www.ksolves.com/",
-    'images': ['static/description/main.png'],
+    'images': ['static/description/Universal-Discount-V13.jpg'],
     'category': 'Sales Management',
     'version': '1.1.1',
     'license': 'LGPL-3',

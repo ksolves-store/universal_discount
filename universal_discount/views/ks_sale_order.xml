@@ -5,7 +5,7 @@
             <field name="model">sale.order</field>
             <field name="inherit_id" ref="sale.view_order_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//form/sheet/notebook/page/group" position="after">
+                <xpath expr="//form/sheet/notebook/page/group" position="before">
                     <div class="ks_container">
                         <field name="ks_enable_discount" invisible="1"/>
                         <label for="ks_global_discount_type" string="Universal Discount Type:" attrs="{'invisible':[('ks_enable_discount','!=',True),('ks_amount_discount','=',0)]}"/>
