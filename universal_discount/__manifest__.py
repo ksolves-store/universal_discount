@@ -28,7 +28,7 @@
 
     'author': "Ksolves India Pvt. Ltd.",
     'website': "https://www.ksolves.com/",
-    'images': ['static/description/main.png'],
+    'images': ['static/description/Universal-Discount-V13.jpg'],
     'category': 'Sales Management',
     'version': '1.1.1',
     'license': 'LGPL-3',
