@@ -14,16 +14,16 @@ class KsGlobalDiscountInvoice(models.Model):
     ks_amount_discount = fields.Monetary(string='Universal Discount', readonly=True, compute='_compute_amount',
                                          store=True, track_visibility='always')
     ks_enable_discount = fields.Boolean(compute='ks_verify_discount')
-    ks_sales_discount_account = fields.Text(compute='ks_verify_discount')
-    ks_purchase_discount_account = fields.Text(compute='ks_verify_discount')
+    ks_sales_discount_account_id = fields.Integer(compute='ks_verify_discount')
+    ks_purchase_discount_account_id = fields.Integer(compute='ks_verify_discount')
 
     @api.multi
-    @api.depends('name')
+    @api.depends('company_id.ks_enable_discount')
     def ks_verify_discount(self):
         for rec in self:
-            rec.ks_enable_discount = rec.env['ir.config_parameter'].sudo().get_param('ks_enable_discount')
-            rec.ks_sales_discount_account = rec.env['ir.config_parameter'].sudo().get_param('ks_sales_discount_account')
-            rec.ks_purchase_discount_account = rec.env['ir.config_parameter'].sudo().get_param('ks_purchase_discount_account')
+            rec.ks_enable_discount = rec.company_id.ks_enable_discount
+            rec.ks_sales_discount_account_id = rec.company_id.ks_sales_discount_account.id
+            rec.ks_purchase_discount_account_id = rec.company_id.ks_purchase_discount_account.id
 
     @api.multi
     @api.depends('invoice_line_ids.price_subtotal', 'tax_line_ids.amount', 'tax_line_ids.amount_rounding',
@@ -73,8 +73,8 @@ class KsGlobalDiscountInvoice(models.Model):
             if self.ks_global_discount_type == "percent":
                 ks_name = ks_name + " (" + str(self.ks_global_discount_rate) + "%)"
             ks_name = ks_name + " for " + (self.origin if self.origin else ("Invoice No " + str(self.id)))
+            if self.ks_sales_discount_account_id and (self.type == "out_invoice" or self.type == "out_refund"):
 
-            if self.ks_sales_discount_account and (self.type == "out_invoice" or self.type == "out_refund"):
                 dict = {
                     'invl_id': self.number,
                     'type': 'src',
@@ -82,12 +82,12 @@ class KsGlobalDiscountInvoice(models.Model):
                     'price_unit': self.ks_amount_discount,
                     'quantity': 1,
                     'price': -self.ks_amount_discount,
-                    'account_id': int(self.ks_sales_discount_account),
+                    'account_id': self.ks_sales_discount_account_id,
                     'invoice_id': self.id,
                 }
                 ks_res.append(dict)
 
-            elif self.ks_purchase_discount_account and (self.type == "in_invoice" or self.type == "in_refund"):
+            elif self.ks_purchase_discount_account_id and (self.type == "in_invoice" or self.type == "in_refund"):
                 dict = {
                     'invl_id': self.number,
                     'type': 'src',
@@ -95,7 +95,7 @@ class KsGlobalDiscountInvoice(models.Model):
                     'price_unit': self.ks_amount_discount,
                     'quantity': 1,
                     'price': -self.ks_amount_discount,
-                    'account_id': int(self.ks_purchase_discount_account),
+                    'account_id': self.ks_purchase_discount_account_id,
 
                     'invoice_id': self.id,
                 }
