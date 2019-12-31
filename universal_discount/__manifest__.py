@@ -30,7 +30,7 @@
     'images': ['static/description/main.png'],
     'license': 'LGPL-3',
     'category': 'Sales Management',
-    'version': '1.1.1',
+    'version': '1.2.0',
 
     'depends': ['base', 'sale', 'purchase', 'sale_management'],
 
