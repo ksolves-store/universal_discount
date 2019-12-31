@@ -46,15 +46,13 @@ class KsGlobalDiscountInvoice(models.Model):
         'ks_global_discount_type',
         'ks_global_discount_rate')
     def _compute_amount(self):
+        super(KsGlobalDiscountInvoice, self)._compute_amount()
         for rec in self:
             if not ('ks_global_tax_rate' in rec):
                 rec.ks_calculate_discount()
             sign = rec.type in ['in_refund', 'out_refund'] and -1 or 1
             rec.amount_total_company_signed = rec.amount_total * sign
             rec.amount_total_signed = rec.amount_total * sign
-
-        res = super(KsGlobalDiscountInvoice, self)._compute_amount()
-        return res
 
     # @api.multi
     def ks_calculate_discount(self):
