@@ -15,21 +15,22 @@ class KSGlobalDiscountPurchases(models.Model):
                                          track_visibility='always', store=True)
     ks_enable_discount = fields.Boolean(compute='ks_verify_discount')
 
-    @api.depends('name')
+    @api.depends('company_id.ks_enable_discount')
     def ks_verify_discount(self):
-        self.ks_enable_discount = self.env['ir.config_parameter'].sudo().get_param('ks_enable_discount')
+        for rec in self:
+            rec.ks_enable_discount = rec.company_id.ks_enable_discount
 
     @api.depends('order_line.price_total', 'ks_global_discount_type', 'ks_global_discount_rate')
     def _amount_all(self):
+        ks_res = super(KSGlobalDiscountPurchases, self)._amount_all()
         for rec in self:
-            ks_res = super(KSGlobalDiscountPurchases, rec)._amount_all()
             if not ('global_tax_rate' in rec):
                 rec.ks_calculate_discount()
         return ks_res
 
     def action_view_invoice(self):
+        ks_res = super(KSGlobalDiscountPurchases, self).action_view_invoice()
         for rec in self:
-            ks_res = super(KSGlobalDiscountPurchases, rec).action_view_invoice()
             ks_res['context']['default_ks_global_discount_rate'] = rec.ks_global_discount_rate
             ks_res['context']['default_ks_global_discount_type'] = rec.ks_global_discount_type
         return ks_res
