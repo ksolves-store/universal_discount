@@ -10,36 +10,41 @@
     <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
           integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap" rel="stylesheet">
-    <link href=https://apps.odoocdn.com/web/content/7247337-184ae0e/1/web.assets_frontend.css" rel="stylesheet">
-
+    <link href="https://apps.odoocdn.com/web/content/7247337-184ae0e/1/web.assets_frontend.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <!-- odoo description page css -->
 
 <body>
 <!-- Header -->
-<div class="row justify-content-md-between justify-content-center border-bottom align-items-center py-2 mx-0">
-    <div class="text-center mr-lg-5 mb-3 mb-lg-0">
-        <a class="btn p-2">
-            <img alt="ksolves-logo" src="images/Ksolves_logo.png" style="height:30px">
-        </a>
-    </div>
-    <div class="d-flex flex-wrap justify-content-center py-2">
-        <div class="text-center">
-            <a class="btn btn-sm mb-2 mb-lg-0" href="https://apps.odoo.com/apps/modules/browse?search=ksolves"
-               style="font-size: 13px;font-size: 14px; font-weight: 500;background-color: #203038;color:#fff;"
-               target="_blank"><i
-                    class="fa fa-list-alt mr-1"></i> <span class="d-none d-sm-inline">Ksolves</span> All Apps</a>
+<header class="py-2">
+    <div class="row align-items-center">
+        <div class="col-12 col-md-4">
+                    <span class="btn pr-2">
+                        <img alt="ksolves-logo" src="images/Ksolves_logo.png" style="height:50px">
+                    </span>
+        </div>
+        <div class="col-6 col-md">
+            <div class="text-md-right">
+                <a class="btn btn-sm py-2 px-md-3" href="https://apps.odoo.com/apps/modules/browse?search=ksolves"
+                   style="font-size: 14px; background-color: #203038;color:#fff;"
+                   target="_blank"><i class="fa fa-list-alt mr-1"></i>
+                    <span class="d-none d-sm-inline">Ksolves</span> All Apps
+                </a>
+            </div>
+        </div>
+        <div class="col-6 col-md-5 text-md-right">
+            <span class="btn btn-sm py-2 px-md-3 mr-1"
+                  style="font-size: 13px;font-size: 14px; font-weight: 500;background-color: #203038;color:#fff;"><i
+                    class="fa fa-check mr-1"></i> Community</span>
+            <span class="btn btn-sm py-2 px-md-3 mr-1"
+                  style="font-size: 13px;font-size: 14px; font-weight: 500;background-color: #203038;color:#fff;"><i
+                    class="fa fa-check mr-1"></i> Enterprise</span>
+            <!--                    <span class="btn btn-sm py-2 px-md-3" style="font-size: 13px;font-size: 14px; font-weight: 500;background-color: #203038;color:#fff;"><i class="fa fa-check mr-1"></i> Enterprise</span>-->
         </div>
     </div>
-    <div class="mt-md-0 mt-4 mb-3 mb-lg-0">
-        <span class="btn btn-sm mb-2 mb-lg-0"
-              style="font-size: 13px;font-size: 14px; font-weight: 500;background-color: #203038;color:#fff;"><i
-                class="fa fa-check"></i> Community</span>
-        <span class="btn btn-sm mb-2 mb-lg-0"
-              style="font-size: 13px;font-size: 14px; font-weight: 500;background-color: #203038;color:#fff;"><i
-                class="fa fa-check"></i> Enterprise</span>
-    </div>
-</div>
+    <hr/>
+</header>
 <div id="loempia_tabs" class="container py-5 oe_styling_v8"
      style="color: #0b3b52;font-family: 'Open sans','sans-serif';">
     <div class="row mb-5">
