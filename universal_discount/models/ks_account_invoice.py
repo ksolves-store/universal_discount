@@ -107,8 +107,8 @@ class KsGlobalDiscountInvoice(models.Model):
 
     @api.model
     def _prepare_refund(self, invoice, date_invoice=None, date=None, description=None, journal_id=None):
-        ks_res = super(KsGlobalDiscountInvoice, self)._prepare_refund(invoice, date_invoice=None, date=None,
-                                                                      description=None, journal_id=None)
+        ks_res = super(KsGlobalDiscountInvoice, self)._prepare_refund(invoice, date_invoice, date,
+                                                                      description, journal_id)
         ks_res['ks_global_discount_rate'] = self.ks_global_discount_rate
         ks_res['ks_global_discount_type'] = self.ks_global_discount_type
         return ks_res
