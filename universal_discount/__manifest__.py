@@ -23,6 +23,19 @@
         - Maintains the global discount entries in accounts specified by you.
         - Label given to you will be used as name given to discount field.
         - Also update the report PDF printout with global discount value.
+        odoo discount, 
+        odoo discount apps, 
+        product discount, 
+        pos fixed amount discount, 
+        multiple discounts, 
+        discounts in sale, 
+        discount on sale purchase, 
+        odoo pos discount apps, 
+        odoo calculation, 
+        odoo calculation apps, 
+        odoo tax calculation apps, 
+        odoo global discounts app, 
+        odoo global discounts on sale purchase
     """,
 
     'author': "Ksolves India Pvt. Ltd.",
