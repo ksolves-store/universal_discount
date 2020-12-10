@@ -1,4 +1,4 @@
-from odoo import api, fields, models
+from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError
 
 
@@ -129,11 +129,30 @@ class KsGlobalDiscountInvoice(models.Model):
                         })
                 total_balance = sum(other_lines.mapped('balance'))
                 total_amount_currency = sum(other_lines.mapped('amount_currency'))
-                terms_lines.update({
-                    'amount_currency': -total_amount_currency,
-                    'debit': total_balance < 0.0 and -total_balance or 0.0,
-                    'credit': total_balance > 0.0 and total_balance or 0.0,
-                })
+                if not sum(terms_lines.mapped('debit')) == rec.amount_total_signed:
+                    for record in terms_lines:
+                        record.update({
+                        'amount_currency': -total_amount_currency,
+                        'debit': record.debit if total_balance < 0.0 else 0.0,
+                        'credit': record.credit if total_balance > 0.0 else 0.0
+                    })
+                else:
+                    for record in terms_lines:
+                        if rec.ks_global_discount_type == "percent":
+                            record.update({
+                                'amount_currency': -total_amount_currency,
+                                'debit': (record.debit - ((
+                                                             record.debit * self.ks_global_discount_rate) / 100)) if total_balance < 0.0 else 0.0,
+                                'credit': (record.credit - ((
+                                                                     record.credit * self.ks_global_discount_rate) / 100)) if total_balance > 0.0 else 0.0
+                            })
+                        else:
+                            discount = rec.ks_global_discount_rate / len(terms_lines)
+                            record.update({
+                                'amount_currency': -total_amount_currency,
+                                'debit': (record.debit - discount) if total_balance < 0.0 else 0.0,
+                                'credit': (record.credit - discount) if total_balance > 0.0 else 0.0
+                            })
             if not already_exists and rec.ks_global_discount_rate > 0:
                 in_draft_mode = self != self._origin
                 if not in_draft_mode and rec.type == 'out_invoice':
@@ -288,10 +307,21 @@ class KsGlobalDiscountInvoice(models.Model):
                             lambda line: line.account_id.user_type_id.type not in ('receivable', 'payable'))
                         total_balance = sum(other_lines.mapped('balance'))
                         total_amount_currency = sum(other_lines.mapped('amount_currency'))
-                        terms_lines.update({
+                        for record in terms_lines:
+                            if rec.ks_global_discount_type == "percent":
+                                record.update({
                                     'amount_currency': -total_amount_currency,
-                                    'debit': total_balance < 0.0 and -total_balance or 0.0,
-                                    'credit': total_balance > 0.0 and total_balance or 0.0,
+                                    'debit': -(record.price_total - ((
+                                                                         record.price_total * rec.ks_global_discount_rate) / 100)) if total_balance < 0.0 else 0.0,
+                                    'credit': record.price_total - ((
+                                                                          record.price_total * rec.ks_global_discount_rate) / 100) if total_balance > 0.0 else 0.0
+                                })
+                            elif rec.ks_global_discount_type == "amount":
+                                discount = rec.ks_global_discount_rate / len(terms_lines)
+                                record.update({
+                                    'amount_currency': -total_amount_currency,
+                                    'debit': -(record.price_total + discount) if total_balance < 0.0 else 0.0,
+                                    'credit': record.price_total + discount if total_balance > 0.0 else 0.0
                                 })
                     else:
                         terms_lines = self.line_ids.filtered(
@@ -302,16 +332,38 @@ class KsGlobalDiscountInvoice(models.Model):
                             lambda line: line.name and line.name.find('Universal Discount') == 0)
                         total_balance = sum(other_lines.mapped('balance')) + amount
                         total_amount_currency = sum(other_lines.mapped('amount_currency'))
+                        line_ids = []
                         dict1 = {
                                     'debit': amount > 0.0 and amount or 0.0,
                                     'credit': amount < 0.0 and -amount or 0.0,
                         }
+                        line_ids.append((1, already_exists.id, dict1))
                         dict2 = {
-                                'debit': total_balance < 0.0 and -total_balance or 0.0,
-                                'credit': total_balance > 0.0 and total_balance or 0.0,
+                            'debit': total_balance < 0.0 and -total_balance or 0.0,
+                            'credit': total_balance > 0.0 and total_balance or 0.0,
+                        }
+                        # for records in already_exists:
+                        #     records.update(dict1)
+                        for record in terms_lines:
+                            if rec.ks_global_discount_type == "percent":
+                                dict2 = {
+                                    'amount_currency': -total_amount_currency,
+                                    'debit': -(record.price_total - ((
+                                                                             record.price_total * rec.ks_global_discount_rate) / 100)) if total_balance < 0.0 else 0.0,
+                                    'credit': record.price_total - ((
+                                                                            record.price_total * rec.ks_global_discount_rate) / 100) if total_balance > 0.0 else 0.0
                                 }
-                        self.line_ids = [(1, already_exists.id, dict1), (1, terms_lines.id, dict2)]
-                        print()
+                            elif rec.ks_global_discount_type == "amount":
+                                discount = rec.ks_global_discount_rate/len(terms_lines)
+                                dict2 = {
+                                    'amount_currency': -total_amount_currency,
+                                    'debit': -(
+                                                record.price_total + discount) if total_balance < 0.0 else 0.0,
+                                    'credit': record.price_total + discount if total_balance > 0.0 else 0.0
+                                }
+                            line_ids.append((1, record.id, dict2))
+                        # self.line_ids = [(1, already_exists.id, dict1), (1, terms_lines.id, dict2)]
+                        self.line_ids = line_ids
 
             elif self.ks_global_discount_rate <= 0:
                 already_exists = self.line_ids.filtered(
