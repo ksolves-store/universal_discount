@@ -130,11 +130,17 @@ class KsGlobalDiscountInvoice(models.Model):
                 total_balance = sum(other_lines.mapped('balance'))
                 total_amount_currency = sum(other_lines.mapped('amount_currency'))
                 if not sum(terms_lines.mapped('debit')) == rec.amount_total_signed:
-                    for record in terms_lines:
-                        record.update({
+                    discount_percent = 0.0
+                    total_discount = 0.0
+                    for record in range(0, len(terms_lines)):
+                        if self.invoice_payment_term_id.line_ids[record].value_amount:
+                            total_discount += self.invoice_payment_term_id.line_ids[record].value_amount
+                        else:
+                            discount_percent = 100 - total_discount
+                        terms_lines[record].update({
                         'amount_currency': -total_amount_currency,
-                        'debit': record.debit if total_balance < 0.0 else 0.0,
-                        'credit': record.credit if total_balance > 0.0 else 0.0
+                        'debit': (self.amount_total * (self.invoice_payment_term_id.line_ids[record].value_amount if not discount_percent else discount_percent)/100) if total_balance < 0.0 else 0.0,
+                        'credit': ((self.amount_total * self.invoice_payment_term_id.line_ids[record].value_amount)/100) if total_balance > 0.0 else 0.0
                     })
                 else:
                     for record in terms_lines:
