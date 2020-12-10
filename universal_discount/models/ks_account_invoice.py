@@ -145,6 +145,12 @@ class KsGlobalDiscountInvoice(models.Model):
                                 'credit': ((self.amount_total * self.invoice_payment_term_id.line_ids[
                                     record].value_amount) / 100) if total_balance > 0.0 else 0.0
                             })
+                        else:
+                            terms_lines[record].update({
+                                'amount_currency': -total_amount_currency,
+                                'debit': self.amount_total if total_balance < 0.0 else 0.0,
+                                'credit': self.amount_total if total_balance > 0.0 else 0.0
+                            })
                 else:
                     for record in terms_lines:
                         if rec.ks_global_discount_type == "percent":
