@@ -8,13 +8,13 @@ class KsGlobalDiscountInvoice(models.Model):
     _inherit = "account.move"
 
     ks_global_discount_type = fields.Selection([
-                                                ('percent', 'Percentage'),
-                                                ('amount', 'Amount')],
-                                               string='Universal Discount Type',
-                                               readonly=True,
-                                                states={'draft': [('readonly', False)],
-                                                        'sent': [('readonly', False)]},
-                                                default='percent')
+        ('percent', 'Percentage'),
+        ('amount', 'Amount')],
+        string='Universal Discount Type',
+        readonly=True,
+        states={'draft': [('readonly', False)],
+                'sent': [('readonly', False)]},
+        default='percent')
     ks_global_discount_rate = fields.Float('Universal Discount',
                                            readonly=True,
                                            states={'draft': [('readonly', False)],
@@ -101,7 +101,7 @@ class KsGlobalDiscountInvoice(models.Model):
                 amount = rec.ks_amount_discount
                 if rec.ks_sales_discount_account_id \
                         and (rec.type == "out_invoice"
-                             or rec.type == "out_refund")\
+                             or rec.type == "out_refund") \
                         and amount > 0:
                     if rec.type == "out_invoice":
                         already_exists.update({
@@ -115,7 +115,7 @@ class KsGlobalDiscountInvoice(models.Model):
                         })
                 if rec.ks_purchase_discount_account_id \
                         and (rec.type == "in_invoice"
-                             or rec.type == "in_refund")\
+                             or rec.type == "in_refund") \
                         and amount > 0:
                     if rec.type == "in_invoice":
                         already_exists.update({
@@ -133,24 +133,27 @@ class KsGlobalDiscountInvoice(models.Model):
                     discount_percent = 0.0
                     total_discount = 0.0
                     for record in range(0, len(terms_lines)):
-                        if self.invoice_payment_term_id.line_ids[record].value_amount:
-                            total_discount += self.invoice_payment_term_id.line_ids[record].value_amount
-                        else:
-                            discount_percent = 100 - total_discount
-                        terms_lines[record].update({
-                        'amount_currency': -total_amount_currency,
-                        'debit': (self.amount_total * (self.invoice_payment_term_id.line_ids[record].value_amount if not discount_percent else discount_percent)/100) if total_balance < 0.0 else 0.0,
-                        'credit': ((self.amount_total * self.invoice_payment_term_id.line_ids[record].value_amount)/100) if total_balance > 0.0 else 0.0
-                    })
+                        if len(self.invoice_payment_term_id.line_ids) >= len(terms_lines):
+                            if self.invoice_payment_term_id.line_ids[record].value_amount:
+                                total_discount += self.invoice_payment_term_id.line_ids[record].value_amount
+                            else:
+                                discount_percent = 100 - total_discount
+                            terms_lines[record].update({
+                                'amount_currency': -total_amount_currency,
+                                'debit': (self.amount_total * (self.invoice_payment_term_id.line_ids[
+                                                                   record].value_amount if not discount_percent else discount_percent) / 100) if total_balance < 0.0 else 0.0,
+                                'credit': ((self.amount_total * self.invoice_payment_term_id.line_ids[
+                                    record].value_amount) / 100) if total_balance > 0.0 else 0.0
+                            })
                 else:
                     for record in terms_lines:
                         if rec.ks_global_discount_type == "percent":
                             record.update({
                                 'amount_currency': -total_amount_currency,
                                 'debit': (record.debit - ((
-                                                             record.debit * self.ks_global_discount_rate) / 100)) if total_balance < 0.0 else 0.0,
+                                                                  record.debit * self.ks_global_discount_rate) / 100)) if total_balance < 0.0 else 0.0,
                                 'credit': (record.credit - ((
-                                                                     record.credit * self.ks_global_discount_rate) / 100)) if total_balance > 0.0 else 0.0
+                                                                    record.credit * self.ks_global_discount_rate) / 100)) if total_balance > 0.0 else 0.0
                             })
                         else:
                             discount = rec.ks_global_discount_rate / len(terms_lines)
@@ -187,7 +190,7 @@ class KsGlobalDiscountInvoice(models.Model):
                     terms_lines = self.line_ids.filtered(
                         lambda line: line.account_id.user_type_id.type in ('receivable', 'payable'))
                     already_exists = self.line_ids.filtered(
-                                    lambda line: line.name and line.name.find('Universal Discount') == 0)
+                        lambda line: line.name and line.name.find('Universal Discount') == 0)
                     if already_exists:
                         amount = self.ks_amount_discount
                         if self.ks_sales_discount_account_id \
@@ -205,7 +208,7 @@ class KsGlobalDiscountInvoice(models.Model):
                                     'debit': amount < 0.0 and -amount or 0.0,
                                     'credit': amount > 0.0 and amount or 0.0,
                                 })
-                        if self.ks_purchase_discount_account_id\
+                        if self.ks_purchase_discount_account_id \
                                 and (self.type == "in_invoice"
                                      or self.type == "in_refund"):
                             if self.type == "in_invoice":
@@ -223,7 +226,7 @@ class KsGlobalDiscountInvoice(models.Model):
                     else:
                         new_tax_line = self.env['account.move.line']
                         create_method = in_draft_mode and \
-                                        self.env['account.move.line'].new or\
+                                        self.env['account.move.line'].new or \
                                         self.env['account.move.line'].create
 
                         if self.ks_sales_discount_account_id \
@@ -231,20 +234,20 @@ class KsGlobalDiscountInvoice(models.Model):
                                      or self.type == "out_refund"):
                             amount = self.ks_amount_discount
                             dict = {
-                                    'move_name': self.name,
-                                    'name': ks_name,
-                                    'price_unit': self.ks_amount_discount,
-                                    'quantity': 1,
-                                    'debit': amount < 0.0 and -amount or 0.0,
-                                    'credit': amount > 0.0 and amount or 0.0,
-                                    'account_id': self.ks_sales_discount_account_id,
-                                    'move_id': self._origin,
-                                    'date': self.date,
-                                    'exclude_from_invoice_tab': True,
-                                    'partner_id': terms_lines.partner_id.id,
-                                    'company_id': terms_lines.company_id.id,
-                                    'company_currency_id': terms_lines.company_currency_id.id,
-                                    }
+                                'move_name': self.name,
+                                'name': ks_name,
+                                'price_unit': self.ks_amount_discount,
+                                'quantity': 1,
+                                'debit': amount < 0.0 and -amount or 0.0,
+                                'credit': amount > 0.0 and amount or 0.0,
+                                'account_id': self.ks_sales_discount_account_id,
+                                'move_id': self._origin,
+                                'date': self.date,
+                                'exclude_from_invoice_tab': True,
+                                'partner_id': terms_lines.partner_id.id,
+                                'company_id': terms_lines.company_id.id,
+                                'company_currency_id': terms_lines.company_currency_id.id,
+                            }
                             if self.type == "out_invoice":
                                 dict.update({
                                     'debit': amount > 0.0 and amount or 0.0,
@@ -269,25 +272,25 @@ class KsGlobalDiscountInvoice(models.Model):
                                 })
                                 self.line_ids = [(0, 0, dict)]
 
-                        if self.ks_purchase_discount_account_id\
+                        if self.ks_purchase_discount_account_id \
                                 and (self.type == "in_invoice"
                                      or self.type == "in_refund"):
                             amount = self.ks_amount_discount
                             dict = {
-                                    'move_name': self.name,
-                                    'name': ks_name,
-                                    'price_unit': self.ks_amount_discount,
-                                    'quantity': 1,
-                                    'debit': amount > 0.0 and amount or 0.0,
-                                    'credit': amount < 0.0 and -amount or 0.0,
-                                    'account_id': self.ks_purchase_discount_account_id,
-                                    'move_id': self.id,
-                                    'date': self.date,
-                                    'exclude_from_invoice_tab': True,
-                                    'partner_id': terms_lines.partner_id.id,
-                                    'company_id': terms_lines.company_id.id,
-                                    'company_currency_id': terms_lines.company_currency_id.id,
-                                    }
+                                'move_name': self.name,
+                                'name': ks_name,
+                                'price_unit': self.ks_amount_discount,
+                                'quantity': 1,
+                                'debit': amount > 0.0 and amount or 0.0,
+                                'credit': amount < 0.0 and -amount or 0.0,
+                                'account_id': self.ks_purchase_discount_account_id,
+                                'move_id': self.id,
+                                'date': self.date,
+                                'exclude_from_invoice_tab': True,
+                                'partner_id': terms_lines.partner_id.id,
+                                'company_id': terms_lines.company_id.id,
+                                'company_currency_id': terms_lines.company_currency_id.id,
+                            }
 
                             if self.type == "in_invoice":
                                 dict.update({
@@ -318,9 +321,9 @@ class KsGlobalDiscountInvoice(models.Model):
                                 record.update({
                                     'amount_currency': -total_amount_currency,
                                     'debit': -(record.price_total - ((
-                                                                         record.price_total * rec.ks_global_discount_rate) / 100)) if total_balance < 0.0 else 0.0,
+                                                                             record.price_total * rec.ks_global_discount_rate) / 100)) if total_balance < 0.0 else 0.0,
                                     'credit': record.price_total - ((
-                                                                          record.price_total * rec.ks_global_discount_rate) / 100) if total_balance > 0.0 else 0.0
+                                                                            record.price_total * rec.ks_global_discount_rate) / 100) if total_balance > 0.0 else 0.0
                                 })
                             elif rec.ks_global_discount_type == "amount":
                                 discount = rec.ks_global_discount_rate / len(terms_lines)
@@ -340,8 +343,8 @@ class KsGlobalDiscountInvoice(models.Model):
                         total_amount_currency = sum(other_lines.mapped('amount_currency'))
                         line_ids = []
                         dict1 = {
-                                    'debit': amount > 0.0 and amount or 0.0,
-                                    'credit': amount < 0.0 and -amount or 0.0,
+                            'debit': amount > 0.0 and amount or 0.0,
+                            'credit': amount < 0.0 and -amount or 0.0,
                         }
                         line_ids.append((1, already_exists.id, dict1))
                         dict2 = {
@@ -360,11 +363,11 @@ class KsGlobalDiscountInvoice(models.Model):
                                                                             record.price_total * rec.ks_global_discount_rate) / 100) if total_balance > 0.0 else 0.0
                                 }
                             elif rec.ks_global_discount_type == "amount":
-                                discount = rec.ks_global_discount_rate/len(terms_lines)
+                                discount = rec.ks_global_discount_rate / len(terms_lines)
                                 dict2 = {
                                     'amount_currency': -total_amount_currency,
                                     'debit': -(
-                                                record.price_total + discount) if total_balance < 0.0 else 0.0,
+                                            record.price_total + discount) if total_balance < 0.0 else 0.0,
                                     'credit': record.price_total + discount if total_balance > 0.0 else 0.0
                                 }
                             line_ids.append((1, record.id, dict2))
