@@ -1,5 +1,6 @@
 from odoo import models, fields, api
 from odoo.exceptions import UserError, ValidationError
+import json
 
 
 class KSGlobalDiscountPurchases(models.Model):
@@ -28,11 +29,24 @@ class KSGlobalDiscountPurchases(models.Model):
                 rec.ks_calculate_discount()
         return ks_res
 
-    def action_view_invoice(self):
+    def _prepare_invoice(self):
+        ks_res = super(KSGlobalDiscountPurchases, self)._prepare_invoice()
+        ks_res['ks_global_discount_type'] = self.ks_global_discount_type
+        ks_res['ks_global_discount_rate'] = self.ks_global_discount_rate
+        return ks_res
+
+    def action_view_invoice(self, invoices=False):
         ks_res = super(KSGlobalDiscountPurchases, self).action_view_invoice()
         for rec in self:
-            ks_res['context']['default_ks_global_discount_rate'] = rec.ks_global_discount_rate
-            ks_res['context']['default_ks_global_discount_type'] = rec.ks_global_discount_type
+            hh = ks_res['context']
+            jj = str(hh).replace("'", '"')
+            dic = json.loads(jj)
+            dic['default_ks_global_discount_rate'] = rec.ks_global_discount_rate
+            dic['default_ks_global_discount_type'] = rec.ks_global_discount_type
+            context_str = json.dumps(dic)
+            ks_res['context'] = context_str
+            # ks_res['context']['default_ks_global_discount_rate'] = rec.ks_global_discount_rate
+            # ks_res['context']['default_ks_global_discount_type'] = rec.ks_global_discount_type
         return ks_res
 
     # @api.multi

@@ -34,7 +34,7 @@ class KsGlobalDiscountInvoice(models.Model):
             rec.ks_sales_discount_account_id = rec.company_id.ks_sales_discount_account.id
             rec.ks_purchase_discount_account_id = rec.company_id.ks_purchase_discount_account.id
 
-    # 1. tax_line_ids is replaced with tax_line_id. 2. api.mulit is also removed.
+    # 1. tax_line_ids is replaced with tax_line_id. 2. api.multi is also removed.
     @api.depends(
         'line_ids.debit',
         'line_ids.credit',
@@ -50,8 +50,8 @@ class KsGlobalDiscountInvoice(models.Model):
         for rec in self:
             if not ('ks_global_tax_rate' in rec):
                 rec.ks_calculate_discount()
-            sign = rec.type in ['in_refund', 'out_refund'] and -1 or 1
-            rec.amount_total_company_signed = rec.amount_total * sign
+            sign = rec.move_type in ['in_refund', 'out_refund'] and -1 or 1
+            # rec.amount_total_company_signed = rec.amount_total * sign
             rec.amount_total_signed = rec.amount_total * sign
 
     # @api.multi
@@ -100,10 +100,10 @@ class KsGlobalDiscountInvoice(models.Model):
             if already_exists:
                 amount = rec.ks_amount_discount
                 if rec.ks_sales_discount_account_id \
-                        and (rec.type == "out_invoice"
-                             or rec.type == "out_refund") \
+                        and (rec.move_type == "out_invoice"
+                             or rec.move_type == "out_refund") \
                         and amount > 0:
-                    if rec.type == "out_invoice":
+                    if rec.move_type == "out_invoice":
                         already_exists.update({
                             'debit': amount > 0.0 and amount or 0.0,
                             'credit': amount < 0.0 and -amount or 0.0,
@@ -114,10 +114,10 @@ class KsGlobalDiscountInvoice(models.Model):
                             'credit': amount > 0.0 and amount or 0.0,
                         })
                 if rec.ks_purchase_discount_account_id \
-                        and (rec.type == "in_invoice"
-                             or rec.type == "in_refund") \
+                        and (rec.move_type == "in_invoice"
+                             or rec.move_type == "in_refund") \
                         and amount > 0:
-                    if rec.type == "in_invoice":
+                    if rec.move_type == "in_invoice":
                         already_exists.update({
                             'debit': amount < 0.0 and -amount or 0.0,
                             'credit': amount > 0.0 and amount or 0.0,
@@ -170,7 +170,7 @@ class KsGlobalDiscountInvoice(models.Model):
                             })
             if not already_exists and rec.ks_global_discount_rate > 0:
                 in_draft_mode = self != self._origin
-                if not in_draft_mode and rec.type == 'out_invoice':
+                if not in_draft_mode and rec.move_type == 'out_invoice':
                     rec._recompute_universal_discount_lines()
                 print()
 
@@ -179,7 +179,7 @@ class KsGlobalDiscountInvoice(models.Model):
         """This Function Create The General Entries for Universal Discount"""
         for rec in self:
             type_list = ['out_invoice', 'out_refund', 'in_invoice', 'in_refund']
-            if rec.ks_global_discount_rate > 0 and rec.type in type_list:
+            if rec.ks_global_discount_rate > 0 and rec.move_type in type_list:
                 if rec.is_invoice(include_receipts=True):
                     in_draft_mode = self != self._origin
                     ks_name = "Universal Discount "
@@ -200,9 +200,9 @@ class KsGlobalDiscountInvoice(models.Model):
                     if already_exists:
                         amount = self.ks_amount_discount
                         if self.ks_sales_discount_account_id \
-                                and (self.type == "out_invoice"
-                                     or self.type == "out_refund"):
-                            if self.type == "out_invoice":
+                                and (self.move_type == "out_invoice"
+                                     or self.move_type == "out_refund"):
+                            if self.move_type == "out_invoice":
                                 already_exists.update({
                                     'name': ks_name,
                                     'debit': amount > 0.0 and amount or 0.0,
@@ -215,9 +215,9 @@ class KsGlobalDiscountInvoice(models.Model):
                                     'credit': amount > 0.0 and amount or 0.0,
                                 })
                         if self.ks_purchase_discount_account_id \
-                                and (self.type == "in_invoice"
-                                     or self.type == "in_refund"):
-                            if self.type == "in_invoice":
+                                and (self.move_type == "in_invoice"
+                                     or self.move_type == "in_refund"):
+                            if self.move_type == "in_invoice":
                                 already_exists.update({
                                     'name': ks_name,
                                     'debit': amount < 0.0 and -amount or 0.0,
@@ -236,8 +236,8 @@ class KsGlobalDiscountInvoice(models.Model):
                                         self.env['account.move.line'].create
 
                         if self.ks_sales_discount_account_id \
-                                and (self.type == "out_invoice"
-                                     or self.type == "out_refund"):
+                                and (self.move_type == "out_invoice"
+                                     or self.move_type == "out_refund"):
                             amount = self.ks_amount_discount
                             dict = {
                                 'move_name': self.name,
@@ -254,7 +254,7 @@ class KsGlobalDiscountInvoice(models.Model):
                                 'company_id': terms_lines.company_id.id,
                                 'company_currency_id': terms_lines.company_currency_id.id,
                             }
-                            if self.type == "out_invoice":
+                            if self.move_type == "out_invoice":
                                 dict.update({
                                     'debit': amount > 0.0 and amount or 0.0,
                                     'credit': amount < 0.0 and -amount or 0.0,
@@ -279,8 +279,8 @@ class KsGlobalDiscountInvoice(models.Model):
                                 self.line_ids = [(0, 0, dict)]
 
                         if self.ks_purchase_discount_account_id \
-                                and (self.type == "in_invoice"
-                                     or self.type == "in_refund"):
+                                and (self.move_type == "in_invoice"
+                                     or self.move_type == "in_refund"):
                             amount = self.ks_amount_discount
                             dict = {
                                 'move_name': self.name,
@@ -298,7 +298,7 @@ class KsGlobalDiscountInvoice(models.Model):
                                 'company_currency_id': terms_lines.company_currency_id.id,
                             }
 
-                            if self.type == "in_invoice":
+                            if self.move_type == "in_invoice":
                                 dict.update({
                                     'debit': amount < 0.0 and -amount or 0.0,
                                     'credit': amount > 0.0 and amount or 0.0,
