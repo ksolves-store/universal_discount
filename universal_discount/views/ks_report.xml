@@ -41,7 +41,7 @@
 
 
     <template id="ks_global_discount_purchase_report" inherit_id="purchase.report_purchaseorder_document">
-        <xpath expr="//div[@class='row justify-content-end']/div/table[@class='table table-sm']/tr[2]" position="after">
+        <xpath expr="//div[@class='row justify-content-end']/div/table[@class='table table-sm']/t[1]" position="after">
             <t t-if="o.ks_amount_discount>0">
 
                 <tr>
