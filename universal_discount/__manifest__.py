@@ -40,7 +40,7 @@
     """,
 
     'author': "Ksolves India Ltd.",
-    'website': "https://www.ksolves.com/",
+    'website': "https://store.ksolves.com/",
     'images': ['static/description/Universal-Discount-V13.jpg'],
     'category': 'Sales Management',
     'version': '1.2.1',
