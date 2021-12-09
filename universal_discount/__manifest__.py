@@ -40,7 +40,7 @@
     """,
 
     'author': "Ksolves India Pvt. Ltd.",
-    'website': "https://www.ksolves.com/",
+    'website': "https://store.ksolves.com/",
     'images': ['static/description/main.png'],
     'category': 'Sales Management',
     'version': '1.2.0',
