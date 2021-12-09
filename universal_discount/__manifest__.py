@@ -39,7 +39,7 @@
     """,
 
     'author': "Ksolves India Pvt. Ltd.",
-    'website': "https://www.ksolves.com/",
+    'website': "https://store.ksolves.com/",
     'images': ['static/description/main.png'],
     'license': 'LGPL-3',
     'category': 'Sales Management',
