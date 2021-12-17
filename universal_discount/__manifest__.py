@@ -45,6 +45,7 @@
     'category': 'Sales Management',
     'version': '1.2.1',
     'license': 'LGPL-3',
+    'currency': 'EUR',
     'depends': ['base', 'sale', 'purchase', 'sale_management'],
 
     'data': [
