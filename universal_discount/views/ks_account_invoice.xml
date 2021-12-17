@@ -22,7 +22,7 @@
                                attrs="{'invisible':[('ks_enable_discount','!=',True),('ks_amount_discount','=',0)],'readonly':['|','|',('ks_enable_discount','!=',True),('state', 'in', ['posted', 'cancel']), ('ks_global_discount_type', 'in', [None, False])]}"/>
                     </div>
                 </xpath>
-                <xpath expr="//field[@name='amount_by_group']" position="after">
+                <xpath expr="//field[@name='tax_totals_json']" position="after">
                     <field name="ks_amount_discount" attrs="{'invisible':[('ks_enable_discount','!=',True),('ks_amount_discount','=',0)]}" />
                 </xpath>
             </field>

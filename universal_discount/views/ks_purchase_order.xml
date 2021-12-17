@@ -17,7 +17,8 @@
                         <field name="ks_global_discount_rate" class="oe_inline" attrs="{'invisible':[('ks_enable_discount','!=',True),('ks_amount_discount','=',0)],'readonly':[('ks_enable_discount','!=',True),('ks_amount_discount','!=',0)]}"/>
                     </div>
                 </xpath>
-                <xpath expr="//field[@name='amount_tax']" position="after">
+<!--                <xpath expr="//field[@name='amount_tax']" position="after">-->
+                <xpath expr="//field[@name='tax_totals_json']" position="after">
                     <field name="ks_amount_discount" attrs="{'invisible':[('ks_enable_discount','!=',True),('ks_amount_discount','=',0)]}" />
                 </xpath>
             </field>

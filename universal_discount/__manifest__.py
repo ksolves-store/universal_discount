@@ -3,7 +3,7 @@
     'name': "Universal Discount",
 
     'summary': """
-        Universal Discount v14.0""",
+        Universal Discount v15.0""",
 
     'description': """
         - Apply a field in Sales, Purchase and Invoice module to calculate discount after the order lines are inserted.
@@ -39,13 +39,16 @@
         odoo global discounts on sale purchase
     """,
 
-    'author': "Ksolves India Pvt. Ltd.",
+    'author': "Ksolves India Ltd.",
     'website': "https://store.ksolves.com/",
-    'images': ['static/description/Universal_Discound_V14.jpg'],
+    'images': ['static/description/Universal_Discound_V15.jpg'],
     'category': 'Sales Management',
     'version': '1.2.1',
     'license': 'LGPL-3',
     'depends': ['base', 'sale', 'purchase', 'sale_management'],
+    'assets': {
+        'web.assets_frontend': ['universal_discount/static/css/ks_stylesheet.css'],
+    },
 
     'data': [
         'views/ks_sale_order.xml',
@@ -54,8 +57,7 @@
         'views/ks_account_invoice_supplier_form.xml',
         'views/ks_account_account.xml',
         'views/ks_report.xml',
-        'views/assets.xml',
-
+        # 'views/assets.xml',
     ],
 
 }
