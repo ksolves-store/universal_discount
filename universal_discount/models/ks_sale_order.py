@@ -21,6 +21,13 @@ class KsGlobalDiscountSales(models.Model):
                                          track_visibility='always')
     ks_enable_discount = fields.Boolean(compute='ks_verify_discount')
 
+    @api.onchange('order_line')
+    def _compute_total_before_discount(self):
+        sub_totals = 0
+        for line in self.order_line:
+            sub_totals += line.price_subtotal
+        self.total_before_discount = sub_totals
+
     @api.depends('company_id.ks_enable_discount')
     def ks_verify_discount(self):
         for rec in self:
