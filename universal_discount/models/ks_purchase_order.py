@@ -6,6 +6,7 @@ import json
 class KSGlobalDiscountPurchases(models.Model):
     _inherit = "purchase.order"
 
+    total_before_discount = fields.Float("Total Before Discount", compute='_compute_total_before_discount', readonly=True)
     ks_global_discount_type = fields.Selection([('percent', 'Percentage'), ('amount', 'Amount')],
                                                string='Universal Discount Type', readonly=True,
                                                states={'draft': [('readonly', False)], 'sent': [('readonly', False)]},
@@ -15,6 +16,13 @@ class KSGlobalDiscountPurchases(models.Model):
     ks_amount_discount = fields.Monetary(string='Universal Discount', readonly=True, compute='_amount_all',
                                          track_visibility='always', store=True)
     ks_enable_discount = fields.Boolean(compute='ks_verify_discount')
+
+    @api.onchange('order_line')
+    def _compute_total_before_discount(self):
+        sub_totals = 0
+        for line in self.order_line:
+            sub_totals += line.price_subtotal
+        self.total_before_discount = sub_totals
 
     @api.depends('company_id.ks_enable_discount')
     def ks_verify_discount(self):

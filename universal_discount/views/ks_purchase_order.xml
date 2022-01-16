@@ -21,6 +21,9 @@
                 <xpath expr="//field[@name='tax_totals_json']" position="after">
                     <field name="ks_amount_discount" attrs="{'invisible':[('ks_enable_discount','!=',True),('ks_amount_discount','=',0)]}" />
                 </xpath>
+                <xpath expr="//field[@name='tax_totals_json']" position="before">
+                    <field name="total_before_discount" attrs="{'invisible':[('ks_enable_discount','!=',True),('ks_amount_discount','=',0)]}" force_save="1"/>
+                </xpath>
             </field>
         </record>
     </data>
