@@ -7,6 +7,7 @@ class KsGlobalDiscountInvoice(models.Model):
     """ changing the model to account.move """
     _inherit = "account.move"
 
+    total_before_discount = fields.Float("Total Before Discount", compute='_compute_total_before_discount', readonly=True)
     ks_global_discount_type = fields.Selection([
         ('percent', 'Percentage'),
         ('amount', 'Amount')],
@@ -26,6 +27,14 @@ class KsGlobalDiscountInvoice(models.Model):
     ks_enable_discount = fields.Boolean(compute='ks_verify_discount')
     ks_sales_discount_account_id = fields.Integer(compute='ks_verify_discount')
     ks_purchase_discount_account_id = fields.Integer(compute='ks_verify_discount')
+
+    @api.onchange('invoice_line_ids')
+    def _compute_total_before_discount(self):
+        sub_totals = 0
+        for line in self.invoice_line_ids:
+            print('line.price_subtotal', line.price_subtotal)
+            sub_totals += line.price_subtotal
+        self.total_before_discount = sub_totals
 
     @api.depends('company_id.ks_enable_discount')
     def ks_verify_discount(self):

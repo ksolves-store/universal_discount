@@ -7,6 +7,8 @@ from odoo.exceptions import UserError, ValidationError
 class KsGlobalDiscountSales(models.Model):
     _inherit = "sale.order"
 
+    total_before_discount = fields.Float("Total Before Discount", compute='_compute_total_before_discount', readonly=True)
+
     ks_global_discount_type = fields.Selection([('percent', 'Percentage'), ('amount', 'Amount')],
                                                string='Universal Discount Type',
                                                readonly=True,
