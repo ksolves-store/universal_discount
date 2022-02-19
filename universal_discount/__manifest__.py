@@ -38,8 +38,8 @@
         odoo global discounts on sale purchase
     """,
 
-    'author': "Ksolves India Pvt. Ltd.",
-    'website': "https://www.ksolves.com/",
+    'author': "Ksolves India Ltd.",
+    'website': "https://store.ksolves.com/",
     'images': ['static/description/main.png'],
     'license': 'LGPL-3',
     'category': 'Sales Management',
