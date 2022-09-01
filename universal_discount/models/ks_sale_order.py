@@ -70,7 +70,7 @@ class KsSaleAdvancePaymentInv(models.TransientModel):
     def _create_invoice(self, order, so_line, amount):
         invoice = super(KsSaleAdvancePaymentInv, self)._create_invoice(order, so_line, amount)
         if invoice:
-            invoice['ks_global_discount_rate'] = order.ks_global_discount_rate
             invoice['ks_global_discount_type'] = order.ks_global_discount_type
-
+            invoice['ks_global_discount_rate'] = order.ks_global_discount_rate
+            
         return invoice
